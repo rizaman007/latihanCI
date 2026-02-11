@@ -3,14 +3,39 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\ContactModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class ContactController extends BaseController
 {
-     public function index() 
+    public function index() 
     { 
-        return view('contact'); 
-    } 
+        $model = new ContactModel();
+        $keyword = $this->request->getGet('search');
+
+        if ($keyword) {
+            $model->like('name', $keyword)
+                ->orLike('email', $keyword)
+                ->orLike('phone', $keyword);
+        }
+
+        $data = [
+            'contacts' => $model->paginate(10, 'contact_group'),
+            'pager'    => $model->pager,
+            'keyword'  => $keyword
+        ];
+
+        return view('contact_list', $data); 
+    }
+
+    public function delete($id = null)
+    {
+        $model = new \App\Models\ContactModel();
+        $model->delete($id);
+
+        session()->setFlashdata('success', 'Data berhasil dihapus.');
+        return redirect()->to(base_url('contact/list'));
+    }
     public function save() 
     { 
         $rules = [
