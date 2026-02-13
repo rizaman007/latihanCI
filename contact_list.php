@@ -20,6 +20,7 @@
                     <table class="table table-hover">
                         <thead class="table-light">
                             <tr>
+                                <th>#</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
@@ -28,12 +29,23 @@
                         </thead>
                         <tbody>
                             <?php if (!empty($contacts) && is_array($contacts)) : ?>
+                                <?php 
+                                    $no = (1 + (10 * ($currentPage - 1))); 
+                                ?>
                                 <?php foreach ($contacts as $c) : ?>
                                     <tr>
+                                        <td><?= $no++ ?></td>
                                         <td><?= esc($c['name']) ?></td>
                                         <td><?= esc($c['email']) ?></td>
                                         <td><?= esc($c['phone']) ?></td>
                                         <td>
+                                            <a href="<?= base_url('contact/detail/' . $c['id']) ?>" class="btn btn-sm btn-outline-info" title="Detail">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+
+                                            <a href="<?= base_url('contact/edit/' . $c['id']) ?>" class="btn btn-sm btn-outline-warning" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
                                             <form action="<?= base_url('contact/delete/' . $c['id']) ?>" method="post" class="d-inline form-delete">
                                                 <?= csrf_field() ?>
                                                 <input type="hidden" name="_method" value="DELETE">
